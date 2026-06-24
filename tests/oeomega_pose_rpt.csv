@@ -1,0 +1,3 @@
+Molecule,SMILES,Rotors,Conformers,ElapsedTime(s),Status
+"sorafenib",CNC(=O)c1cc(ccn1)Oc2ccc(cc2)NC(=O)Nc3ccc(c(c3)C(F)(F)F)Cl,9,1,3.28
+"lenvatinib",COc1cc2c(cc1C(=O)N)c(ccn2)Oc3ccc(c(c3)Cl)NC(=O)NC4CC4,8,1,0.05

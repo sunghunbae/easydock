@@ -1,0 +1,7 @@
+#Interface settings
+
+#fixpka :   
+    -in  input.smi
+    -ionize  7.4
+    -out  input_fixpka.smi
+    #-prefix  fixpka

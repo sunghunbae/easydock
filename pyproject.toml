@@ -21,6 +21,7 @@ classifiers = [
     "Topic :: Scientific/Engineering :: Bio-Informatics",
     "Topic :: Scientific/Engineering :: Chemistry",
 ]
+dependencies = ["meeko>=0.7.1,<0.8"]
 
 [project.optional-dependencies]
 rdkit = ["rdkit>=2017.09"]
@@ -38,3 +39,24 @@ include = ["easydock*"]
 
 [tool.vcs-versioning]
 version_file = "easydock/_version.py"
+
+[tool.pixi.workspace]
+channels = ["conda-forge"]
+platforms = ["linux-64"]
+
+[tool.pixi.pypi-dependencies]
+easydock = { path = ".", editable = true }
+
+[tool.pixi.environments]
+default = { solve-group = "default" }
+rdkit = { features = ["rdkit"], solve-group = "default" }
+
+[tool.pixi.tasks]
+
+[tool.pixi.dependencies]
+rdkit = ">=2026.3.3,<2027"
+pyyaml = ">=6.0.3,<7"
+scipy = ">=1.18.0,<2"
+gemmi = ">=0.7.5,<0.8"
+scikit-learn = ">=1.9.0,<2"
+prody = ">=2.6.1,<3"

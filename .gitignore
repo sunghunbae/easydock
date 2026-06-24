@@ -5,3 +5,6 @@ easydock.egg-info
 dist
 test
 easydock/_version.py
+# pixi environments
+.pixi/*
+!.pixi/config.toml

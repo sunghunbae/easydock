@@ -1,0 +1,6 @@
+protein: ./3WZD-receptor-pdb4amber.pdbqt
+protein_setup: ./grid.txt
+exhaustiveness: 8
+seed: 0
+n_poses: 5
+ncpu: 5

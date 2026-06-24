@@ -1,0 +1,63 @@
+services:
+  ### Uni-pKa Protonation
+  unipka:  
+    image: easydock:unipka
+    container_name: easydock-unipka  
+    restart: unless-stopped  
+    volumes:
+      - ./data:/data  
+
+  ### Vina-GPU Accelerated Docking
+  vinagpu:  
+    image: easydock:vinagpu
+    container_name: easydock-vinagpu  
+    restart: unless-stopped  
+    environment:  
+      - NVIDIA_VISIBLE_DEVICES=all
+    command: ['server']
+    deploy:  
+      resources:  
+        reservations:  
+          devices:  
+            - driver: nvidia
+              device_ids: ['0'] # count: all  
+              capabilities: [gpu]
+    volumes:  
+      - ./data:/data  
+      - ./models:/models  
+
+  ### SurfDock Deep-Learning Docking
+  surfdock:  
+    image: easydock:surfdock
+    container_name: easydock-surfdock
+    restart: unless-stopped  
+    environment:  
+      - NVIDIA_VISIBLE_DEVICES=all  
+    deploy:  
+      resources:  
+        reservations:  
+          devices:  
+            - driver: nvidia
+              device_ids: ['0'] # count: all  
+              capabilities: [gpu]  
+    volumes:  
+      - ./data:/data  
+      - ./models:/models  
+
+  ### CarsiDock Deep-Learning Docking
+  carsidock:  
+    image: easydock:carsidock
+    container_name: easydock-carsidock  
+    restart: unless-stopped  
+    environment:  
+      - NVIDIA_VISIBLE_DEVICES=all
+    deploy:  
+      resources:  
+        reservations:  
+          devices:  
+            - driver: nvidia
+              device_ids: ['0'] # count: all  
+              capabilities: [gpu]  
+    volumes:  
+      - ./data:/data  
+      - ./models:/models  
