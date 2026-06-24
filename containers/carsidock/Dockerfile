@@ -10,12 +10,8 @@ RUN wget -O /carsidock/checkpoints/rtmscore_model1.pth https://github.com/sc8668
     pip uninstall gdown -y
 
 COPY carsidock_server.py /carsidock/carsidock_server.py
+COPY entrypoint.sh /carsidock/entrypoint.sh
 
 ENV LD_LIBRARY_PATH="/usr/local/lib:/app/openbabel/build/lib:/usr/lib:/lib:$LD_LIBRARY_PATH"
 
-ENTRYPOINT ["/bin/sh", "-c", "\
-case \"$1\" in \
-  server) shift; exec python /carsidock/carsidock_server.py \"$@\" ;; \
-  help) echo \"Use docker run <image> server <args>\" ;; \
-  *) exec \"$@\" ;; \
-esac", "--"]
+ENTRYPOINT [ "/carsidock/entrypoint.sh" ]

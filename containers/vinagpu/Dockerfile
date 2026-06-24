@@ -2,7 +2,8 @@ FROM ubuntu:22.04
 
 ENV DEBIAN_FRONTEND=noninteractive
 
-RUN apt-get update --fix-missing && apt-get install -y --no-install-recommends \
+RUN apt-get update --fix-missing \
+    && apt-get install -y --no-install-recommends \
         wget \
         build-essential \
         python3 \
@@ -30,23 +31,23 @@ RUN mkdir -p /etc/OpenCL/vendors \
 # Download AutoDock-Vina-GPU-2.1 (vina-gpu)
 ENV BASE=https://raw.githubusercontent.com/DeltaGroupNJUPT/Vina-GPU-2.1/main
 RUN mkdir -p /opt/vinagpu/vina-gpu \
-    && wget -q -O /opt/vinagpu/vina-gpu/AutoDock-Vina-GPU-2-1  $BASE/AutoDock-Vina-GPU-2.1/AutoDock-Vina-GPU-2-1 \
-    && wget -q -O /opt/vinagpu/vina-gpu/Kernel1_Opt.bin         $BASE/AutoDock-Vina-GPU-2.1/Kernel1_Opt.bin \
-    && wget -q -O /opt/vinagpu/vina-gpu/Kernel2_Opt.bin         $BASE/AutoDock-Vina-GPU-2.1/Kernel2_Opt.bin \
+    && wget -q -O /opt/vinagpu/vina-gpu/AutoDock-Vina-GPU-2-1 $BASE/AutoDock-Vina-GPU-2.1/AutoDock-Vina-GPU-2-1 \
+    && wget -q -O /opt/vinagpu/vina-gpu/Kernel1_Opt.bin       $BASE/AutoDock-Vina-GPU-2.1/Kernel1_Opt.bin \
+    && wget -q -O /opt/vinagpu/vina-gpu/Kernel2_Opt.bin       $BASE/AutoDock-Vina-GPU-2.1/Kernel2_Opt.bin \
     && chmod +x /opt/vinagpu/vina-gpu/AutoDock-Vina-GPU-2-1
 
 # Download QuickVina2-GPU-2.1 (qvina-gpu)
 RUN mkdir -p /opt/vinagpu/qvina-gpu \
-    && wget -q -O /opt/vinagpu/qvina-gpu/QuickVina2-GPU-2-1    $BASE/QuickVina2-GPU-2.1/QuickVina2-GPU-2-1 \
-    && wget -q -O /opt/vinagpu/qvina-gpu/Kernel1_Opt.bin        $BASE/QuickVina2-GPU-2.1/Kernel1_Opt.bin \
-    && wget -q -O /opt/vinagpu/qvina-gpu/Kernel2_Opt.bin        $BASE/QuickVina2-GPU-2.1/Kernel2_Opt.bin \
+    && wget -q -O /opt/vinagpu/qvina-gpu/QuickVina2-GPU-2-1 $BASE/QuickVina2-GPU-2.1/QuickVina2-GPU-2-1 \
+    && wget -q -O /opt/vinagpu/qvina-gpu/Kernel1_Opt.bin    $BASE/QuickVina2-GPU-2.1/Kernel1_Opt.bin \
+    && wget -q -O /opt/vinagpu/qvina-gpu/Kernel2_Opt.bin    $BASE/QuickVina2-GPU-2.1/Kernel2_Opt.bin \
     && chmod +x /opt/vinagpu/qvina-gpu/QuickVina2-GPU-2-1
 
 # Download QuickVina-W-GPU-2.1 (qvinaw-gpu)
 RUN mkdir -p /opt/vinagpu/qvinaw-gpu \
-    && wget -q -O /opt/vinagpu/qvinaw-gpu/QuickVina-W-GPU-2-1  $BASE/QuickVina-W-GPU-2.1/QuickVina-W-GPU-2-1 \
-    && wget -q -O /opt/vinagpu/qvinaw-gpu/Kernel1_Opt.bin       $BASE/QuickVina-W-GPU-2.1/Kernel1_Opt.bin \
-    && wget -q -O /opt/vinagpu/qvinaw-gpu/Kernel2_Opt.bin       $BASE/QuickVina-W-GPU-2.1/Kernel2_Opt.bin \
+    && wget -q -O /opt/vinagpu/qvinaw-gpu/QuickVina-W-GPU-2-1 $BASE/QuickVina-W-GPU-2.1/QuickVina-W-GPU-2-1 \
+    && wget -q -O /opt/vinagpu/qvinaw-gpu/Kernel1_Opt.bin     $BASE/QuickVina-W-GPU-2.1/Kernel1_Opt.bin \
+    && wget -q -O /opt/vinagpu/qvinaw-gpu/Kernel2_Opt.bin     $BASE/QuickVina-W-GPU-2.1/Kernel2_Opt.bin \
     && chmod +x /opt/vinagpu/qvinaw-gpu/QuickVina-W-GPU-2-1
 
 # Download CPU binaries from QVina repo (https://github.com/QVina/qvina)
@@ -63,16 +64,10 @@ RUN mkdir -p /opt/vinagpu/vina \
     && wget -q -O /opt/vinagpu/vina/vina  $QVINA_BASE/vina \
     && chmod +x /opt/vinagpu/vina/vina
 
+RUN ldconfig
+#ENV LD_LIBRARY_PATH=/usr/local/lib:$LD_LIBRARY_PATH
+
 COPY vinagpu_server.py /opt/vinagpu/vinagpu_server.py
+COPY entrypoint.sh /opt/entrypoint.sh
 
-ENV LD_LIBRARY_PATH="/usr/local/lib:${LD_LIBRARY_PATH}"
-
-ENTRYPOINT ["/bin/bash", "-c", "\
-case \"$1\" in \
-    server) shift; exec python3 /opt/vinagpu/vinagpu_server.py \"$@\" ;; \
-    help) echo 'Usage: docker run <image> server'; \
-          echo 'GPU programs: vina-gpu, qvina-gpu, qvinaw-gpu'; \
-          echo 'CPU programs: vina, qvina, qvinaw'; \
-          echo 'Set the program via '\''program'\'' key in the server config (init_server block or top-level).' ;; \
-    *) exec \"$@\" ;; \
-esac", "--"]
+ENTRYPOINT ["/opt/entrypoint.sh"]
